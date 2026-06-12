@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agents in the Enterprise — GRC Challenge Catalog</title>
+<style>
+  /* ── Reset & Base ─────────────────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy:      #1E2761;
+    --navy-mid:  #273580;
+    --navy-light:#3A4A8A;
+    --ice:       #C8D8F0;
+    --white:     #FFFFFF;
+    --off:       #F4F6FB;
+    --slate:     #3A4A6B;
+    --muted:     #7A8BB0;
+    --border:    #DDE3F0;
+
+    --c-critical: #C0392B;
+    --c-high:     #D4820A;
+    --c-medium:   #1A6EA0;
+    --bg-critical:#FDEDEC;
+    --bg-high:    #FEF5E7;
+    --bg-medium:  #EBF5FB;
+
+    /* Domain colours */
+    --d1: #534AB7; --d1-bg: #EFEDFC;
+    --d2: #C0392B; --d2-bg: #FDEDEC;
+    --d3: #0F6E56; --d3-bg: #E8F6F2;
+    --d4: #185FA5; --d4-bg: #EAF2FB;
+    --d5: #3B6D11; --d5-bg: #EDF6E5;
+    --d6: #7B3B8A; --d6-bg: #F5EDF8;
+    --d7: #7F77DD; --d7-bg: #EEECFC;
+
+    --font-display: 'Georgia', 'Times New Roman', serif;
+    --font-body:    'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --radius-sm:  6px;
+    --radius-md:  10px;
+    --radius-lg:  16px;
+    --shadow-sm:  0 1px 4px rgba(30,39,97,.07), 0 2px 8px rgba(30,39,97,.05);
+    --shadow-md:  0 2px 10px rgba(30,39,97,.10), 0 4px 20px rgba(30,39,97,.07);
+    --transition: .18s ease;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--off);
+    color: var(--slate);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── HERO ─────────────────────────────────────────────────────────────────── */
+  .hero {
+    background: var(--navy);
+    color: var(--white);
+    padding: 64px 40px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -120px; right: -120px;
+    width: 520px; height: 520px;
+    border-radius: 50%;
+    background: var(--navy-mid);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 360px; height: 360px;
+    border-radius: 50%;
+    background: var(--navy-light);
+    pointer-events: none;
+  }
+  .hero-inner { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
+
+  .hero-eyebrow {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ice);
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 5vw, 46px);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+  .hero-sub {
+    font-size: 16px;
+    color: var(--ice);
+    max-width: 640px;
+    margin-bottom: 40px;
+    line-height: 1.6;
+  }
+
+  /* Stats row */
+  .stats-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: var(--radius-lg);
+    padding: 24px 28px;
+    max-width: 640px;
+  }
+  .stat-item { flex: 1; min-width: 90px; text-align: center; }
+  .stat-n {
+    font-family: var(--font-display);
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1;
+    display: block;
+  }
+  .stat-l { font-size: 11px; color: var(--ice); margin-top: 5px; display: block; }
+
+  .hero-footer {
+    margin-top: 28px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* ── MAIN LAYOUT ──────────────────────────────────────────────────────────── */
+  .page { max-width: 900px; margin: 0 auto; padding: 0 24px 80px; }
+
+  /* ── SECTION HEADER ───────────────────────────────────────────────────────── */
+  .section-head {
+    padding: 40px 0 20px;
+  }
+  .section-head h2 {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--navy);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .section-head p { font-size: 13.5px; color: var(--muted); }
+
+  /* ── DOMAIN NAVIGATION ────────────────────────────────────────────────────── */
+  .domain-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 20px 0 8px;
+    position: sticky;
+    top: 0;
+    background: var(--off);
+    z-index: 100;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  .nav-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 13px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    color: var(--slate);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .nav-pill:hover { border-color: currentColor; }
+  .nav-pill .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+
+  /* ── DOMAIN SECTION ───────────────────────────────────────────────────────── */
+  .domain-section { margin-bottom: 40px; }
+
+  .domain-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px 22px;
+    border-radius: var(--radius-lg);
+    margin-bottom: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .domain-header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.08);
+    pointer-events: none;
+  }
+  .domain-icon-wrap {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.18);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 22px;
+  }
+  .domain-meta { flex: 1; }
+  .domain-badge {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    opacity: .75;
+    margin-bottom: 4px;
+  }
+  .domain-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.25;
+    margin-bottom: 4px;
+  }
+  .domain-subtitle { font-size: 12.5px; opacity: .8; color: var(--white); line-height: 1.4; }
+
+  .domain-count-badge {
+    text-align: center;
+    flex-shrink: 0;
+    background: rgba(255,255,255,.15);
+    border-radius: 10px;
+    padding: 8px 14px;
+    border: 1px solid rgba(255,255,255,.2);
+  }
+  .domain-count-n {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--white);
+    display: block;
+    line-height: 1;
+  }
+  .domain-count-l { font-size: 9.5px; color: rgba(255,255,255,.7); margin-top: 3px; display: block; }
+
+  /* ── CHALLENGE CARDS ──────────────────────────────────────────────────────── */
+  .challenges-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .challenge-card {
+    border-radius: var(--radius-md);
+    border: 1.5px solid transparent;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--transition), transform var(--transition);
+    cursor: pointer;
+  }
+  .challenge-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .challenge-card.open  { box-shadow: var(--shadow-md); }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 16px;
+  }
+  .sev-pill {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    padding: 3px 9px;
+    border-radius: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .sev-critical { background: var(--c-critical); color: #fff; }
+  .sev-high     { background: var(--c-high);     color: #fff; }
+  .sev-medium   { background: var(--c-medium);   color: #fff; }
+
+  .card-num {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 500;
+    flex-shrink: 0;
+    min-width: 18px;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    font-family: var(--font-display);
+    color: var(--navy);
+    flex: 1;
+    line-height: 1.3;
+  }
+  .card-chevron {
+    color: var(--muted);
+    font-size: 11px;
+    transition: transform var(--transition);
+    flex-shrink: 0;
+  }
+  .challenge-card.open .card-chevron { transform: rotate(180deg); }
+
+  .card-body {
+    display: none;
+    padding: 0 16px 16px;
+    border-top: 1px solid rgba(0,0,0,.06);
+  }
+  .challenge-card.open .card-body { display: block; }
+
+  .card-desc {
+    font-size: 13.5px;
+    color: var(--slate);
+    line-height: 1.7;
+    margin-top: 12px;
+    margin-bottom: 14px;
+  }
+  .implications-box {
+    background: var(--off);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 12px;
+  }
+  .impl-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .impl-list { list-style: none; }
+  .impl-list li {
+    font-size: 12.5px;
+    color: var(--slate);
+    line-height: 1.55;
+    padding-left: 16px;
+    position: relative;
+    margin-bottom: 4px;
+  }
+  .impl-list li::before { content: '→'; position: absolute; left: 0; color: var(--muted); }
+
+  .tag-row { display: flex; flex-wrap: wrap; gap: 5px; }
+  .tag {
+    font-size: 10px;
+    padding: 2px 9px;
+    border-radius: 10px;
+    background: var(--white);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  /* Severity bg tints on cards */
+  .card-critical { background: var(--bg-critical); border-color: rgba(192,57,43,.2); }
+  .card-high     { background: var(--bg-high);     border-color: rgba(212,130,10,.2); }
+  .card-medium   { background: var(--bg-medium);   border-color: rgba(26,110,160,.2); }
+
+  /* ── SEVERITY SUMMARY BAR ─────────────────────────────────────────────────── */
+  .sev-summary {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    margin: 28px 0 0;
+    box-shadow: var(--shadow-sm);
+  }
+  .sev-item {
+    flex: 1;
+    min-width: 130px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .sev-circle {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .sev-circle.c { background: var(--bg-critical); color: var(--c-critical); }
+  .sev-circle.h { background: var(--bg-high);     color: var(--c-high);     }
+  .sev-circle.m { background: var(--bg-medium);   color: var(--c-medium);   }
+  .sev-detail { }
+  .sev-detail strong { display: block; font-size: 13.5px; color: var(--navy); font-weight: 600; }
+  .sev-detail span   { font-size: 11.5px; color: var(--muted); }
+
+  /* ── CLOSING QUESTIONS ────────────────────────────────────────────────────── */
+  .questions-section {
+    background: var(--navy);
+    border-radius: var(--radius-lg);
+    padding: 36px 32px;
+    margin-top: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .questions-section::before {
+    content: '';
+    position: absolute; top: -80px; right: -80px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: var(--navy-mid);
+    pointer-events: none;
+  }
+  .q-head {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 6px;
+    position: relative;
+  }
+  .q-sub {
+    font-size: 13px;
+    color: var(--ice);
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .q-list { display: flex; flex-direction: column; gap: 10px; position: relative; }
+  .q-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+  }
+  .q-num {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ice);
+    flex-shrink: 0;
+    min-width: 36px;
+  }
+  .q-text {
+    font-size: 14.5px;
+    color: var(--white);
+    font-family: var(--font-display);
+    line-height: 1.35;
+  }
+
+  /* ── FOOTER ───────────────────────────────────────────────────────────────── */
+  .page-footer {
+    max-width: 900px;
+    margin: 28px auto 0;
+    padding: 0 24px 32px;
+    font-size: 11px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  /* ── PRINT ────────────────────────────────────────────────────────────────── */
+  @media print {
+    .domain-nav { display: none; }
+    .challenge-card .card-body { display: block !important; }
+    .card-chevron { display: none; }
+    .hero { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .domain-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  /* ── RESPONSIVE ───────────────────────────────────────────────────────────── */
+  @media (max-width: 600px) {
+    .hero { padding: 40px 20px 36px; }
+    .page { padding: 0 16px 60px; }
+    .stats-row { padding: 16px 18px; }
+    .stat-n { font-size: 28px; }
+    .domain-count-badge { display: none; }
+    .domain-title { font-size: 16px; }
+    .sev-summary { flex-direction: column; }
+    .questions-section { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<header class="hero">
+  <div class="hero-inner">
+    <p class="hero-eyebrow">GRC Practitioner Playbook · As at mid-2026</p>
+    <h1>AI Agents in the Enterprise</h1>
+    <p class="hero-sub">A Challenge Catalog for GRC Leaders &amp; Internal Audit Practitioners — 7 governance domains, 42 challenges, rated by governance exposure.</p>
+    <div class="stats-row">
+      <div class="stat-item"><span class="stat-n">7</span><span class="stat-l">Governance Domains</span></div>
+      <div class="stat-item"><span class="stat-n">42</span><span class="stat-l">Challenges Mapped</span></div>
+      <div class="stat-item"><span class="stat-n">18</span><span class="stat-l">Critical Severity</span></div>
+      <div class="stat-item"><span class="stat-n">16</span><span class="stat-l">High Severity</span></div>
+      <div class="stat-item"><span class="stat-n">8</span><span class="stat-l">Medium Severity</span></div>
+    </div>
+    <p class="hero-footer">EU AI Act &nbsp;·&nbsp; NIST AI RMF &nbsp;·&nbsp; ISO/IEC 42001 &nbsp;·&nbsp; Singapore MAIMF 2026 &nbsp;·&nbsp; GDPR &nbsp;·&nbsp; FATF &nbsp;·&nbsp; SR 11-7</p>
+  </div>
+</header>
+
+<!-- ── PAGE CONTENT ── -->
+<main class="page">
+
+  <!-- Domain navigation pills -->
+  <nav class="domain-nav" aria-label="Jump to domain">
+    <a class="nav-pill" href="#d1" style="color:var(--d1)"><span class="dot" style="background:var(--d1)"></span>D1 Governance</a>
+    <a class="nav-pill" href="#d2" style="color:var(--d2)"><span class="dot" style="background:var(--d2)"></span>D2 Risk</a>
+    <a class="nav-pill" href="#d3" style="color:var(--d3)"><span class="dot" style="background:var(--d3)"></span>D3 Compliance</a>
+    <a class="nav-pill" href="#d4" style="color:var(--d4)"><span class="dot" style="background:var(--d4)"></span>D4 Control</a>
+    <a class="nav-pill" href="#d5" style="color:var(--d5)"><span class="dot" style="background:var(--d5)"></span>D5 Audit</a>
+    <a class="nav-pill" href="#d6" style="color:var(--d6)"><span class="dot" style="background:var(--d6)"></span>D6 Process</a>
+    <a class="nav-pill" href="#d7" style="color:var(--d7)"><span class="dot" style="background:var(--d7)"></span>D7 Ethics</a>
+  </nav>
+
+  <div class="section-head">
+    <h2>The Seven Governance Domains</h2>
+    <p>Click any challenge to expand its description, GRC implications, and regulatory tags. Severity ratings reflect governance exposure, not technical complexity.</p>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       D1 — GOVERNANCE STRUCTURE & ACCOUNTABILITY
+  ══════════════════════════════════════════════════════════════════════ -->
+  <section class="domain-section" id="d1">
+    <div class="domain-header" style="background:var(--d1)">
+      <div class="domain-icon-wrap">🏛</div>
+      <div class="domain-meta">
+        <div class="domain-badge">D1 · 5 Challenges</div>
+        <div class="domain-title">Governance Structure &amp; Accountability</div>
+        <div class="domain-subtitle">Board, leadership accountability, AI policy, organisational ownership</div>
+      </div>
+      <div class="domain-count-badge"><span class="domain-count-n">5</span><span class="domain-count-l">challenges</span></div>
+    </div>
+    <div class="challenges-list">
+
+      <div class="challenge-card card-critical" onclick="toggle(this)">
+        <div class="card-header">
+          <span class="sev-pill sev-critical">CRITICAL</span>
+          <span class="card-num">1</span>
+          <span class="card-title">Absence of an AI governance framework</span>
+          <span class="card-chevron">▼</span>
+        </div>
+        <div class="card-body">
+          <p class="card-desc">Most organisations deploy AI agents before establishing who owns them, what decisions they can make, and under what authority they operate. Without a policy architecture — covering agent classification, approval gates, escalation paths, and lifecycle controls — there is no consistent basis for oversight. Governance that is retrofitted after deployment is both costlier and weaker than governance designed from the start.</p>
+          <div class="implications-box">
+            <div class="impl-label">Key implications for GRC and audit</div>
+            <ul class="impl-list">
+              <li>Board lacks visibility into agent populations, capabilities, and risk exposures</li>
+              <li>No clear ownership: IT, Legal, Risk, and Business all claim partial oversight but none is accountable</li>
+              <li>Agent sprawl: dozens of agents running under differing rules across business units</li>
+              <li>Inability to demonstrate governance maturity to regulators or auditors</li>
+            </ul>
+          </div>
+          <div class="tag-row"><span class="tag">Policy</span><span class="tag">Board</span><span class="tag">Ownership</span><span class="tag">NIST AI RMF</span><span class="tag">ISO 42001</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-critical" onclick="toggle(this)">
+        <div class="card-header">
+          <span class="sev-pill sev-critical">CRITICAL</span>
+          <span class="card-num">2</span>
+          <span class="card-title">Blurred accountability: who owns agent actions?</span>
+          <span class="card-chevron">▼</span>
+        </div>
+        <div class="card-body">
+          <p class="card-desc">An AI agent acts on behalf of a human principal but with no direct human decision at each step. When an agent executes a transaction, sends a communication, or modifies a record, it is unclear whether accountability lies with the deploying business unit, the AI team, the vendor, or the individual who authorised the task. Regulators and auditors expect human accountability; the agent architecture creates structural ambiguity.</p>
+          <div class="implications-box">
+            <div class="impl-label">Key implications for GRC and audit</div>
+            <ul class="impl-list">
+              <li>SOC 2, SOX, and financial regulations assume control owners are humans with documented rationale</li>
+              <li>Incident attribution becomes contested across teams and vendors</li>
+              <li>Legal liability for agent-caused harm is untested in most jurisdictions</li>
+              <li>Compensation and performance frameworks have no mechanism for agent-driven outcomes</li>
+            </ul>
+          </div>
+          <div class="tag-row"><span class="tag">Accountability</span><span class="tag">SOX</span><span class="tag">Legal liability</span><span class="tag">Control ownership</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-high" onclick="toggle(this)">
+        <div class="card-header">
+          <span class="sev-pill sev-high">HIGH</span>
+          <span class="card-num">3</span>
+          <span class="card-title">Board and senior leadership AI literacy gap</span>
+          <span class="card-chevron">▼</span>
+        </div>
+        <div class="card-body">
+          <p class="card-desc">Effective governance of AI agents requires board-level understanding of what agents do, what can go wrong, and what oversight mechanisms exist. Without this, boards cannot challenge management, set appropriate risk appetite, or discharge their duty of care. A 2025 EY analysis found over 60% of board members cite AI governance as a primary agenda item, yet few have the technical grounding to engage substantively.</p>
+          <div class="implications-box">
+            <div class="impl-label">Key implications for GRC and audit</div>
+            <ul class="impl-list">
+              <li>Boards approve AI strategies they cannot adequately challenge</li>
+              <li>Risk appetite statements for AI remain vague or absent</li>
+              <li>Directors carry personal liability exposure they are unaware of</li>
+              <li>Inadequate board-level metrics for AI performance and risk</li>
+            </ul>
+          </div>
+          <div class="tag-row"><span class="tag">Board</span><span class="tag">Risk appetite</span><span class="tag">Director liability</span><span class="tag">EY 2025</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-high" onclick="toggle(this)">
+        <div class="card-header">
+          <span class="sev-pill sev-high">HIGH</span>
+          <span class="card-num">4</span>
+          <span class="card-title">Unclear risk appetite for agentic autonomy</span>
+          <span class="card-chevron">▼</span>
+        </div>
+        <div class="card-body">
+          <p class="card-desc">Agent autonomy sits on a spectrum from human-approved every step to fully autonomous multi-day tasks. Corporations rarely define where on this spectrum they are willing to operate for different risk classes. Without an explicit risk appetite for agentic decision-making, deployments default to whatever the vendor or development team set — typically optimised for capability, not governance.</p>
+          <div class="implications-box">
+            <div class="impl-label">Key implications for GRC and audit</div>
+            <ul class="impl-list">
+              <li>High-stakes agent actions (payment execution, contract issuance) proceed without calibrated approval thresholds</li>
+              <li>Risk appetite is implicit rather than board-approved</li>
+              <li>Inconsistency across business units running agents with different autonomy levels</li>
+              <li>No basis for escalation or exception handling</li>
+            </ul>
+          </div>
+          <div class="tag-row"><span class="tag">Risk appetite</span><span class="tag">Autonomy</span><span class="tag">Escalation</span><span class="tag">Thresholds</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-critical" onclick="toggle(this)">
+        <div class="card-header">
+          <span class="sev-pill sev-critical">CRITICAL</span>
+          <span class="card-num">5</span>
+          <span class="card-title">Shadow AI and ungoverned agent proliferation</span>
+          <span class="card-chevron">▼</span>
+        </div>
+        <div class="card-body">
+          <p class="card-desc">Business units and individuals are deploying AI agents outside central IT and governance frameworks using low-code/no-code platforms, API keys, and SaaS connectors. Gartner projects 40% of enterprise applications will embed task-specific agents by end of 2026. The majority of these deployments happen without security review, data classification, or governance registration.</p>
+          <div class="implications-box">
+            <div class="impl-label">Key implications for GRC and audit</div>
+            <ul class="impl-list">
+              <li>Corporate data exposed through unmonitored agent integrations</li>
+              <li>No inventory of agents: security and audit cannot cover what they cannot see</li>
+              <li>Agents accumulate permissions over time without periodic review</li>
+              <li>Regulatory exposure from agents processing personal data without DPO awareness</li>
+            </ul>
+          </div>
+          <div class="tag-row"><span class="tag">Shadow AI</span><span class="tag">Agent inventory</span><span class="tag">SaaS risk</span><span class="tag">Gartner 2026</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       D2 — RISK MANAGEMENT
+  ══════════════════════════════════════════════════════════════════════ -->
+  <section class="domain-section" id="d2">
+    <div class="domain-header" style="background:var(--d2)">
+      <div class="domain-icon-wrap">⚠</div>
+      <div class="domain-meta">
+        <div class="domain-badge">D2 · 7 Challenges</div>
+        <div class="domain-title">Risk Management</div>
+        <div class="domain-subtitle">Operational, cyber, model, and systemic risk across the agent lifecycle</div>
+      </div>
+      <div class="domain-count-badge"><span class="domain-count-n">7</span><span class="domain-count-l">challenges</span></div>
+    </div>
+    <div class="challenges-list">
+
+      <div class="challenge-card card-critical" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-critical">CRITICAL</span><span class="card-num">1</span><span class="card-title">Cascading and compounding failures</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">AI agents operate in chains: one agent's output becomes another's input. A bias, error, or hallucination introduced early can propagate and amplify through the pipeline before any human sees the result. A single failure point can disable far more of the enterprise than the equivalent human process failure.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Operational risk models built for discrete human errors do not capture cascading agent failures</li><li>No circuit-breaker controls to interrupt agent chains mid-execution</li><li>Disaster recovery plans do not account for state recovery after mid-chain agent failure</li><li>Risk quantification models underestimate correlated agent losses</li></ul></div>
+          <div class="tag-row"><span class="tag">Cascading failure</span><span class="tag">Operational risk</span><span class="tag">Chain architecture</span><span class="tag">Resilience</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-critical" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-critical">CRITICAL</span><span class="card-num">2</span><span class="card-title">Prompt injection and adversarial manipulation</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">AI agents process content from emails, documents, websites, databases, and APIs — all of which can contain malicious instructions designed to override the agent's original task. Unlike traditional malware, prompt injection requires no code execution; a carefully crafted sentence in an email can redirect an agent to exfiltrate data, execute transactions, or disable controls. Completely securing agents against prompt engineering is likely impossible.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Agents processing customer communications are weaponisable attack vectors</li><li>Security controls designed for code-based threats do not detect semantic attacks</li><li>Multi-agent systems allow injection in one agent to propagate through the chain</li><li>Red team testing of agents against adversarial content is not yet standard practice</li></ul></div>
+          <div class="tag-row"><span class="tag">Prompt injection</span><span class="tag">Cybersecurity</span><span class="tag">Adversarial</span><span class="tag">OWASP LLM Top 10</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-critical" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-critical">CRITICAL</span><span class="card-num">3</span><span class="card-title">Identity &amp; access management for non-human entities</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">AI agents require credentials, API keys, and permissions to function. Traditional IAM is designed for human users with static roles; agents operate dynamically, often requiring broad, cross-system permissions. Compromised agent credentials can trigger large-scale data exfiltration or service disruption. Agents also accumulate permissions over time — the AI equivalent of privilege creep.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>No agent-specific IAM policies; agents often run under shared service accounts</li><li>Agent credentials stored insecurely in code repositories or environment variables</li><li>No periodic access review process for non-human identities</li><li>Single compromised agent credential may expose multiple enterprise systems</li></ul></div>
+          <div class="tag-row"><span class="tag">IAM</span><span class="tag">Non-human identity</span><span class="tag">Privilege creep</span><span class="tag">Credentials</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-high" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-high">HIGH</span><span class="card-num">4</span><span class="card-title">Third-party and vendor risk in AI supply chains</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">Most enterprise AI agents depend on LLM providers, vector database vendors, embedding model providers, and SaaS integrations. A 2025 Verizon study found 30% of data breaches involved third parties, double the rate from two years prior. Each dependency introduces a risk layer: model updates can change agent behaviour without notice; vendor data handling practices may not align with corporate data governance.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Vendor AI model updates silently change agent behaviour in production</li><li>Customer data processed by third-party LLMs under unclear contractual data residency terms</li><li>No fourth-party risk visibility into the LLM vendor's own supply chain</li><li>Third-party agents integrated via MCP may carry unreviewed permissions</li></ul></div>
+          <div class="tag-row"><span class="tag">Third-party risk</span><span class="tag">TPRM</span><span class="tag">Vendor management</span><span class="tag">MCP</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-high" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-high">HIGH</span><span class="card-num">5</span><span class="card-title">Model drift and behavioural degradation</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">AI agent behaviour is not static. Underlying models are retrained, fine-tuned, or replaced; prompt templates evolve; data distributions shift. An agent that passed validation at deployment may behave materially differently six months later without any code change. Periodic audits cannot detect drift that occurs continuously between review cycles.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Production agent outputs diverge from validated baseline undetected</li><li>No alerting mechanism when agent decision distributions shift beyond acceptable thresholds</li><li>Regulatory submissions based on agent behaviour at a point-in-time become stale</li><li>Model versioning not tracked in agent deployment records</li></ul></div>
+          <div class="tag-row"><span class="tag">Model drift</span><span class="tag">Monitoring</span><span class="tag">Continuous control</span><span class="tag">Validation</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-critical" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-critical">CRITICAL</span><span class="card-num">6</span><span class="card-title">Hallucination and factual reliability risk</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">AI agents can generate plausible but factually incorrect outputs — including fabricated regulatory citations, incorrect financial calculations, or non-existent contract clauses — and act on them autonomously. A 2025 EY analysis found 22% of Fortune 100 companies now flag AI hallucinations as material risks in 10-K disclosures. Hallucinations in multi-step agentic pipelines compound: a wrong fact in step 2 shapes every subsequent step.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Agents drafting compliance reports or regulatory filings may contain undetected errors</li><li>Financial agents acting on hallucinated data may execute incorrect transactions</li><li>Downstream human reviewers may over-rely on AI outputs (automation bias)</li><li>No systematic output validation controls embedded in agent pipelines</li></ul></div>
+          <div class="tag-row"><span class="tag">Hallucination</span><span class="tag">Material risk</span><span class="tag">EY 2025</span><span class="tag">Automation bias</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-high" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-high">HIGH</span><span class="card-num">7</span><span class="card-title">Concentration and systemic risk</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">Widespread enterprise reliance on a small number of LLM providers creates concentration risk. An outage, security incident, or policy change at a major model provider can simultaneously disable AI agents across thousands of organisations. The enterprise itself faces internal concentration risk if critical processes depend on a single agent architecture.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Business continuity plans do not address AI provider outages</li><li>No documented fallback procedures for when AI agents are unavailable</li><li>Regulatory scrutiny on AI concentration risk is increasing</li><li>Contractual protections against unilateral model deprecation are often absent</li></ul></div>
+          <div class="tag-row"><span class="tag">Concentration risk</span><span class="tag">BCP</span><span class="tag">Provider dependency</span><span class="tag">Systemic risk</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       D3 — COMPLIANCE & REGULATORY
+  ══════════════════════════════════════════════════════════════════════ -->
+  <section class="domain-section" id="d3">
+    <div class="domain-header" style="background:var(--d3)">
+      <div class="domain-icon-wrap">⚖</div>
+      <div class="domain-meta">
+        <div class="domain-badge">D3 · 6 Challenges</div>
+        <div class="domain-title">Compliance &amp; Regulatory</div>
+        <div class="domain-subtitle">Evolving legal obligations across jurisdictions as AI agents scale</div>
+      </div>
+      <div class="domain-count-badge"><span class="domain-count-n">6</span><span class="domain-count-l">challenges</span></div>
+    </div>
+    <div class="challenges-list">
+
+      <div class="challenge-card card-critical" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-critical">CRITICAL</span><span class="card-num">1</span><span class="card-title">Navigating a fragmented and rapidly evolving regulatory landscape</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">Corporations deploying AI agents across jurisdictions face an accelerating patchwork of obligations. The EU AI Act phases in high-risk obligations through 2026. GDPR applies to automated decision-making. Singapore launched the world's first national agentic AI governance framework in January 2026. Australia operates under eight AI Ethics Principles. Vietnam's AI Strategy 2030 is gaining regulatory teeth. Regulatory change is outpacing governance infrastructure.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Compliance obligations differ materially by jurisdiction, business function, and AI risk classification</li><li>No single compliance programme can map the full global obligation set</li><li>Regulatory divergence creates implementation conflicts</li><li>Internal compliance teams lack AI-specific expertise to interpret new obligations</li></ul></div>
+          <div class="tag-row"><span class="tag">EU AI Act</span><span class="tag">NIST AI RMF</span><span class="tag">GDPR</span><span class="tag">ISO 42001</span><span class="tag">Singapore 2026</span><span class="tag">Multi-jurisdiction</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-critical" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-critical">CRITICAL</span><span class="card-num">2</span><span class="card-title">Automated decision-making and right to explanation</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">GDPR Article 22 grants individuals the right not to be subject to solely automated decisions with significant legal or similarly significant effects, and the right to receive a meaningful explanation. AI agents making credit, employment, insurance, or access decisions without human involvement trigger this obligation. Most current agent architectures cannot generate legally adequate explanations on demand.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Consumer-facing agents making eligibility decisions carry GDPR exposure</li><li>Agents processing personal data require DPIA if no human review is incorporated</li><li>Right-to-erasure requests must propagate through all agent-accessed data stores</li><li>Vendor-provided agents may not expose explanation mechanisms to the deploying enterprise</li></ul></div>
+          <div class="tag-row"><span class="tag">GDPR Art.22</span><span class="tag">DPIA</span><span class="tag">Explainability</span><span class="tag">Consumer rights</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-critical" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-critical">CRITICAL</span><span class="card-num">3</span><span class="card-title">AML, KYC, and financial crime compliance</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">AI agents in financial processes — payment approval, customer onboarding, transaction monitoring — interact directly with AML and KYC obligations. FATF guidance and national AML laws require human oversight for certain decisions. Agents trained on historical data may perpetuate existing compliance gaps or create new ones.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Automated customer risk scoring by agents may not meet regulator expectations for human review</li><li>Agents processing transaction data must comply with data localisation and retention obligations</li><li>Model risk management frameworks (SR 11-7) may apply to AI agents used in financial decisions</li><li>Agent-driven onboarding must produce audit-ready documentation equivalent to human processes</li></ul></div>
+          <div class="tag-row"><span class="tag">AML</span><span class="tag">KYC</span><span class="tag">FATF</span><span class="tag">SR 11-7</span><span class="tag">Vietnam AML 2022</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-high" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-high">HIGH</span><span class="card-num">4</span><span class="card-title">Employment law and workforce displacement obligations</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">Mass deployment of AI agents replaces or augments human roles. Employment law obligations vary by jurisdiction: some require consultation with works councils or unions before significant automation; others mandate impact assessments. Agents performing tasks formerly done by employees raise questions of unfair dismissal, algorithmic management liability, and obligations under collective bargaining agreements.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Change programmes that automate roles without employment law review carry litigation risk</li><li>Agents performing performance assessments may constitute algorithmic management subject to regulation</li><li>Board metrics for AI investment must incorporate human capital impact reporting</li><li>People risk — skills atrophy and over-reliance — is an emerging operational risk category</li></ul></div>
+          <div class="tag-row"><span class="tag">Employment law</span><span class="tag">Workforce</span><span class="tag">Algorithmic management</span><span class="tag">People risk</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-high" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-high">HIGH</span><span class="card-num">5</span><span class="card-title">Data sovereignty, residency, and cross-border AI processing</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">AI agents send data to LLM APIs, retrieve from cloud vector stores, and write to SaaS platforms — often across jurisdictions with conflicting data localisation requirements. China, India, Vietnam, and the EU all impose forms of data residency obligation. An agent deployed in one country may process data in another before returning a result, creating an inadvertent cross-border transfer.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Data flows triggered by agent operations are often invisible to DPO and compliance teams</li><li>Transfer impact assessments required under GDPR for non-adequate countries apply to agent data flows</li><li>Financial institutions face sector-specific localisation obligations that constrain agent architecture</li><li>Contractual clauses with LLM vendors may not satisfy national data localisation requirements</li></ul></div>
+          <div class="tag-row"><span class="tag">Data sovereignty</span><span class="tag">Cross-border transfers</span><span class="tag">GDPR</span><span class="tag">Data localisation</span><span class="tag">DPO</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-medium" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-medium">MEDIUM</span><span class="card-num">6</span><span class="card-title">IP, copyright, and output ownership</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">AI agents generate content, code, analysis, and contracts. The ownership of AI-generated outputs is legally unsettled in most jurisdictions: courts have ruled AI-generated works may lack copyright protection. Agents may also reproduce training data in their outputs, creating infringement exposure. Corporations that rely on agent-generated IP without assessing its legal status carry silent portfolio risk.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Contracts, patents, and reports generated by agents may not be owned by the corporation</li><li>Outputs containing reproduced third-party content may expose the corporation to infringement claims</li><li>Procurement and IP policy must be updated to address AI-generated work product</li><li>Vendor indemnification clauses for copyright infringement are inconsistent across AI providers</li></ul></div>
+          <div class="tag-row"><span class="tag">IP</span><span class="tag">Copyright</span><span class="tag">AI-generated output</span><span class="tag">Vendor indemnification</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       D4 — INTERNAL CONTROL
+  ══════════════════════════════════════════════════════════════════════ -->
+  <section class="domain-section" id="d4">
+    <div class="domain-header" style="background:var(--d4)">
+      <div class="domain-icon-wrap">🔒</div>
+      <div class="domain-meta">
+        <div class="domain-badge">D4 · 5 Challenges</div>
+        <div class="domain-title">Internal Control</div>
+        <div class="domain-subtitle">Control design, segregation of duties, and control assurance for agent environments</div>
+      </div>
+      <div class="domain-count-badge"><span class="domain-count-n">5</span><span class="domain-count-l">challenges</span></div>
+    </div>
+    <div class="challenges-list">
+
+      <div class="challenge-card card-critical" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-critical">CRITICAL</span><span class="card-num">1</span><span class="card-title">Segregation of duties in automated pipelines</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">SoD is a foundational internal control principle: no single actor should initiate, approve, and record a transaction. AI agents can violate SoD systematically at scale — an agent that creates a purchase order can also approve it and update the ERP, all within a single automated workflow. Unlike human SoD failures, which are isolated events, agent SoD failures can affect every transaction the agent processes.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Existing SoD matrices do not account for AI agents as actors</li><li>Control mapping exercises must be rerun with agents included as control subjects</li><li>Process redesign is required where agents perform multiple SoD-incompatible functions</li><li>Internal audit must test whether agent-enabled SoD violations exist in production</li></ul></div>
+          <div class="tag-row"><span class="tag">SoD</span><span class="tag">SOX</span><span class="tag">ERP</span><span class="tag">Process control</span><span class="tag">Control mapping</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-critical" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-critical">CRITICAL</span><span class="card-num">2</span><span class="card-title">Human-in-the-loop design and override effectiveness</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">Most governance frameworks require meaningful human oversight of high-risk AI decisions. In practice, human review points are often poorly designed: reviewers are presented with agent outputs after the fact, have insufficient context to challenge them, and face time pressure that makes rubber-stamping the default. Kill-switches and rollbacks may be ineffective for agents that have already executed multi-step tasks.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Human review gates that do not provide reviewers with agent reasoning are cosmetic controls</li><li>Kill-switch effectiveness degrades for agents with long-horizon task execution</li><li>Override design must be stress-tested, not assumed to work</li><li>Reviewer training on AI output scepticism is required to avoid automation bias</li></ul></div>
+          <div class="tag-row"><span class="tag">Human oversight</span><span class="tag">Kill-switch</span><span class="tag">Automation bias</span><span class="tag">HITL</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-high" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-high">HIGH</span><span class="card-num">3</span><span class="card-title">Change management and agent version control</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">AI agents are software artefacts. Changes to prompts, tools, permissions, retrieval indexes, or underlying models are all material changes that can alter agent behaviour. Yet many organisations treat agent configuration as operational, not subject to formal change control. Prompt engineering is not treated as code subject to version control, testing, and approval workflows.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Agent behaviour changes silently in production without a change record</li><li>Regression testing is not applied to agent prompt or tool changes</li><li>Change records needed for SOX and ISO 27001 compliance do not capture agent configuration changes</li><li>Rollback of a faulty agent deployment is complicated by lack of version history</li></ul></div>
+          <div class="tag-row"><span class="tag">Change control</span><span class="tag">Version control</span><span class="tag">SOX</span><span class="tag">ISO 27001</span><span class="tag">Prompt engineering</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-high" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-high">HIGH</span><span class="card-num">4</span><span class="card-title">Control testing methodology for agent-driven processes</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">Traditional control testing involves walkthrough testing of human-executed processes. Agents execute at machine speed, process millions of transactions, and make no two decisions in exactly the same way. Standard sample-based testing is insufficient; auditors and risk teams need new methodologies — continuous control monitoring, statistical output analysis, adversarial testing — that match the nature of agent behaviour.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Sample-based control testing may miss systemic agent errors affecting specific data segments</li><li>Continuous monitoring platforms must be configured before agents go live, not after</li><li>Internal audit skill sets require upskilling in AI testing methodology</li><li>Assurance opinions on agent-driven controls require disclosure of testing approach limitations</li></ul></div>
+          <div class="tag-row"><span class="tag">Control testing</span><span class="tag">Continuous monitoring</span><span class="tag">Audit methodology</span><span class="tag">Statistical testing</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-critical" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-critical">CRITICAL</span><span class="card-num">5</span><span class="card-title">Access logging, immutable audit trails, and evidence preservation</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">Audit trails for AI agents must capture not only what the agent did but how it reached its decision: inputs received, tools invoked, intermediate reasoning steps, data accessed, and actions taken. Many current agent implementations log only final outputs. Regulators under the EU AI Act and sector-specific frameworks require this level of traceability for high-risk systems.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Log gaps make it impossible to reconstruct agent decision-making for regulatory inquiries</li><li>Immutable logging infrastructure is required — agents must not be able to overwrite their own audit trail</li><li>Log retention periods must align with regulatory requirements by jurisdiction and industry</li><li>Log completeness must be tested, not assumed — audit should independently verify logging coverage</li></ul></div>
+          <div class="tag-row"><span class="tag">Audit trail</span><span class="tag">Immutable logs</span><span class="tag">EU AI Act</span><span class="tag">Evidence preservation</span><span class="tag">Traceability</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       D5 — INTERNAL AUDIT
+  ══════════════════════════════════════════════════════════════════════ -->
+  <section class="domain-section" id="d5">
+    <div class="domain-header" style="background:var(--d5)">
+      <div class="domain-icon-wrap">🔍</div>
+      <div class="domain-meta">
+        <div class="domain-badge">D5 · 5 Challenges</div>
+        <div class="domain-title">Internal Audit</div>
+        <div class="domain-subtitle">Auditing AI agents, and adapting audit methodology to an agent-augmented environment</div>
+      </div>
+      <div class="domain-count-badge"><span class="domain-count-n">5</span><span class="domain-count-l">challenges</span></div>
+    </div>
+    <div class="challenges-list">
+
+      <div class="challenge-card card-critical" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-critical">CRITICAL</span><span class="card-num">1</span><span class="card-title">Auditing opaque reasoning: the black-box problem</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">Agentic AI often does not generate human-readable reasoning unless explicitly programmed to do so. When an agent denies a credit application, approves a vendor, or flags a transaction, the auditor may have access only to the input and the output — not the chain of reasoning in between. This absence of interpretability undermines the auditability and accountability that regulated environments require.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Auditors cannot form an opinion on the reasonableness of agent decisions without reasoning evidence</li><li>Explainability tools (SHAP, LIME, chain-of-thought logging) must be built in at design, not added post-hoc</li><li>Audit standards bodies (IIA, ISACA) are developing guidance; auditors face interpretive gaps in the interim</li><li>Management assertions that agent decisions are "appropriate" cannot be accepted without evidence</li></ul></div>
+          <div class="tag-row"><span class="tag">Explainability</span><span class="tag">Black box</span><span class="tag">IIA</span><span class="tag">ISACA</span><span class="tag">Chain-of-thought</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-high" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-high">HIGH</span><span class="card-num">2</span><span class="card-title">Defining the audit scope for multi-agent systems</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">A single business process may now involve five or more agents in sequence, each accessing different systems. Defining the audit entity — which agent, which pipeline, which data flow — is non-trivial. Responsibility for control failures diffuses across agents, and the "problem of many hands" makes attributing audit findings to accountable parties structurally difficult.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Audit scope definitions written before agent deployment are likely incomplete</li><li>Risk assessment must map agent pipelines end-to-end, not treat each agent in isolation</li><li>Agent orchestration layers may not be subject to any audit entity's existing scope</li><li>Findings must be attributable to an accountable human owner, even when the failure was agent-driven</li></ul></div>
+          <div class="tag-row"><span class="tag">Audit scope</span><span class="tag">Multi-agent</span><span class="tag">Attribution</span><span class="tag">Pipeline mapping</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-high" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-high">HIGH</span><span class="card-num">3</span><span class="card-title">Continuous auditing requirements vs. periodic audit cycles</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">Agentic systems evolve continuously — gaining new permissions, accessing new data, changing behaviour between audit cycles. Annual or quarterly audits were designed for processes that change slowly. Agent risk changes in real time. Audit functions must develop continuous assurance capabilities or accept that their opinions reflect a historical state that may no longer exist.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Annual audit of an agent deployed 11 months ago may reflect a system that no longer exists</li><li>Continuous monitoring tools must be integrated into the audit function's toolset</li><li>Audit resource models must accommodate ongoing agent surveillance, not just periodic engagements</li><li>CAEs must report to audit committees on the limitations of periodic audit in an agentic environment</li></ul></div>
+          <div class="tag-row"><span class="tag">Continuous auditing</span><span class="tag">CAE</span><span class="tag">Audit committee</span><span class="tag">Real-time risk</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-medium" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-medium">MEDIUM</span><span class="card-num">4</span><span class="card-title">Auditing AI agents used within internal audit itself</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">Internal audit functions are themselves adopting AI agents for document review, control testing, and report drafting. This creates a recursive challenge: who audits the auditors' AI? Audit quality standards, professional scepticism obligations, and independence requirements apply to AI-assisted audit work. Audit AI tools must themselves be validated and subject to quality review.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>AI-generated audit workpapers must meet the same evidential standards as human-prepared papers</li><li>Audit AI tools must be validated before use in public-interest entity audits</li><li>Over-reliance on AI in audit work reduces professional scepticism — a quality and liability risk</li><li>External quality assessment programmes must begin evaluating audit AI governance</li></ul></div>
+          <div class="tag-row"><span class="tag">Audit quality</span><span class="tag">AI in audit</span><span class="tag">Professional scepticism</span><span class="tag">Independence</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-high" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-high">HIGH</span><span class="card-num">5</span><span class="card-title">Skill gap in the audit function</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">A 2025 RSM survey found 92% of middle market executives experienced challenges with AI implementation, and 70% of those using generative AI needed outside assistance. Internal audit teams built for financial and process audit rarely include AI engineers, data scientists, or prompt specialists. Auditing AI agents requires both audit methodology expertise and technical AI understanding simultaneously.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Audit functions cannot form opinions on agent controls they do not technically understand</li><li>Recruitment, training, and co-sourcing strategies must address the AI competency gap</li><li>Professional certifications (CIA, CISA) are updating syllabi; in-house upskilling cannot wait</li><li>CAEs must disclose AI audit skill limitations to audit committees while building capability</li></ul></div>
+          <div class="tag-row"><span class="tag">Audit skills</span><span class="tag">CIA</span><span class="tag">CISA</span><span class="tag">Upskilling</span><span class="tag">Co-sourcing</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       D6 — INTERNAL PROCESS
+  ══════════════════════════════════════════════════════════════════════ -->
+  <section class="domain-section" id="d6">
+    <div class="domain-header" style="background:var(--d6)">
+      <div class="domain-icon-wrap">⚙</div>
+      <div class="domain-meta">
+        <div class="domain-badge">D6 · 6 Challenges</div>
+        <div class="domain-title">Internal Process</div>
+        <div class="domain-subtitle">Operational challenges in deploying, managing, and maintaining agents in business processes</div>
+      </div>
+      <div class="domain-count-badge"><span class="domain-count-n">6</span><span class="domain-count-l">challenges</span></div>
+    </div>
+    <div class="challenges-list">
+
+      <div class="challenge-card card-high" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-high">HIGH</span><span class="card-num">1</span><span class="card-title">Process redesign and workflow integration complexity</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">Inserting AI agents into existing business processes requires more than technical integration — it requires process redesign. Current processes contain human judgment checkpoints, contextual escalation, exception handling, and institutional knowledge that agents cannot replicate without deliberate design. Organisations that simply automate existing processes inherit all existing inefficiencies while adding new failure modes.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Exception handling processes must be explicitly designed for agent-driven workflows</li><li>Handoff points between agents and human workers require careful UX and process design</li><li>Agent deployment without process re-engineering may reduce quality while appearing to reduce cost</li><li>Standard operating procedures must be updated to reflect agent roles</li></ul></div>
+          <div class="tag-row"><span class="tag">Process design</span><span class="tag">Workflow</span><span class="tag">Exception handling</span><span class="tag">SOPs</span><span class="tag">Re-engineering</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-critical" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-critical">CRITICAL</span><span class="card-num">2</span><span class="card-title">Data quality and provenance as an agent dependency</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">AI agents are only as reliable as the data they consume. Poor data quality — duplicates, stale records, inconsistent taxonomies, missing fields — produces poor agent outputs. Unlike human workers who apply contextual judgment to compensate for data quality issues, agents typically propagate data errors mechanically. At scale, a systemic data quality issue becomes a systemic agent quality issue.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Data governance maturity is a prerequisite for responsible agent deployment, not an afterthought</li><li>Agents accessing unclassified data may expose sensitive information in their outputs</li><li>Data lineage must be traceable through agent pipelines for audit and regulatory purposes</li><li>Master data management gaps that were tolerable with human workers become critical with agents</li></ul></div>
+          <div class="tag-row"><span class="tag">Data quality</span><span class="tag">Data governance</span><span class="tag">Master data</span><span class="tag">Data lineage</span><span class="tag">Provenance</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-high" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-high">HIGH</span><span class="card-num">3</span><span class="card-title">Operational resilience and business continuity</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">Organisations increasingly rely on AI agents for time-critical processes. If agent infrastructure, the underlying LLM provider, or a critical integration fails, the organisation may lack the human capacity or procedural knowledge to operate manually. Resilience planning must explicitly address agent unavailability.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>BCP playbooks must include AI agent outage scenarios</li><li>Staff who previously performed agent-replaced tasks may no longer exist or retain the skill</li><li>SLA obligations with customers may be breached if agent-dependent processes fail</li><li>Recovery time objectives for agent infrastructure must be defined and tested</li></ul></div>
+          <div class="tag-row"><span class="tag">BCP</span><span class="tag">Resilience</span><span class="tag">Operational continuity</span><span class="tag">Provider outage</span><span class="tag">SLA</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-high" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-high">HIGH</span><span class="card-num">4</span><span class="card-title">Change management and human adoption risk</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">Employee resistance, misuse, and over-reliance are the most common causes of AI deployment failure. Workers may distrust agents, bypass them, over-rely on them without verification, or use them outside their design parameters. Ethical risk literature shows AI can tempt employees into unethical shortcuts — outsourcing decisions they should own, accepting outputs without verification.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Adoption metrics must track actual use patterns, not just deployment counts</li><li>Over-reliance risk must be managed through training, clear use-case boundaries, and spot-checking</li><li>Ethical AI use must be embedded in employee codes of conduct and monitored</li><li>Change management must address both the fear of replacement and the risk of complacency</li></ul></div>
+          <div class="tag-row"><span class="tag">Change management</span><span class="tag">Adoption</span><span class="tag">Over-reliance</span><span class="tag">Ethics</span><span class="tag">Behavioural risk</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-medium" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-medium">MEDIUM</span><span class="card-num">5</span><span class="card-title">Agent lifecycle management</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">AI agents have lifecycles: design, testing, deployment, monitoring, versioning, and decommissioning. Most organisations lack a formal agent lifecycle management framework. Agents are deployed and forgotten; they accumulate permissions, access stale data, and operate without review. Decommissioning is equally neglected — retired agents may retain live credentials and data access.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Agent inventory must include deployment date, last review date, and owner</li><li>Periodic review gates must be mandatory — at least annually, more frequently for high-risk deployments</li><li>Decommissioning procedures must revoke credentials and access, not just stop execution</li><li>Lifecycle management is a governance control, not a DevOps task</li></ul></div>
+          <div class="tag-row"><span class="tag">Lifecycle management</span><span class="tag">Agent inventory</span><span class="tag">Decommissioning</span><span class="tag">Periodic review</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-medium" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-medium">MEDIUM</span><span class="card-num">6</span><span class="card-title">Knowledge management and institutional memory</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">As agents replace knowledge-intensive human roles, the institutional knowledge embedded in those roles may be lost. Workers who previously maintained relationships, understood contextual nuance, and exercised discretionary judgment may be redeployed or exit the organisation. If the agent fails or its scope changes, there may be no human capacity to fill the gap.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Critical process knowledge must be documented before agents replace roles</li><li>Agent prompt engineering often encodes business rules implicitly — these must be made explicit</li><li>Succession planning for agent-dependent processes is a new category of people risk</li><li>Organisations relying on agents for regulatory expertise face risk if the regulatory landscape changes faster than the agent can be updated</li></ul></div>
+          <div class="tag-row"><span class="tag">Institutional knowledge</span><span class="tag">Knowledge management</span><span class="tag">People risk</span><span class="tag">Succession planning</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       D7 — ETHICS & FAIRNESS
+  ══════════════════════════════════════════════════════════════════════ -->
+  <section class="domain-section" id="d7">
+    <div class="domain-header" style="background:var(--d7)">
+      <div class="domain-icon-wrap">🧭</div>
+      <div class="domain-meta">
+        <div class="domain-badge">D7 · 4 Challenges</div>
+        <div class="domain-title">Ethics &amp; Fairness</div>
+        <div class="domain-subtitle">Bias, fairness, transparency, and societal impact of enterprise AI agents</div>
+      </div>
+      <div class="domain-count-badge"><span class="domain-count-n">4</span><span class="domain-count-l">challenges</span></div>
+    </div>
+    <div class="challenges-list">
+
+      <div class="challenge-card card-critical" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-critical">CRITICAL</span><span class="card-num">1</span><span class="card-title">Algorithmic bias and discriminatory outcomes</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">AI agents trained on historical data perpetuate and can amplify historical biases. In hiring, lending, insurance, and access decisions, biased agents produce systematically discriminatory outcomes at scale and at speed — affecting far more people than equivalent human bias. Regulatory bodies in the EU, US, and Australia are actively investigating algorithmic discrimination.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Bias audits must be conducted before deployment in decisions affecting protected characteristics</li><li>Bias is dynamic — agents can become more biased over time as data distributions shift</li><li>Disparate impact analysis must be incorporated into control testing methodology</li><li>Regulatory enforcement for algorithmic discrimination is accelerating globally</li></ul></div>
+          <div class="tag-row"><span class="tag">Bias</span><span class="tag">Fairness</span><span class="tag">Disparate impact</span><span class="tag">EU AI Act</span><span class="tag">Discrimination</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-high" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-high">HIGH</span><span class="card-num">2</span><span class="card-title">Transparency and disclosure obligations</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">Multiple regulatory frameworks now require disclosure when AI is involved in significant decisions affecting individuals. The EU AI Act requires transparency for high-risk systems. Singapore's 2026 framework requires organisations to inform end users when they are interacting with an AI agent rather than a human. GDPR requires meaningful information about automated logic.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Customer-facing agents must disclose their AI nature under emerging regulations</li><li>AI-generated decisions must be presented with sufficient explanation for individuals to understand and contest them</li><li>Internal AI use in HR and performance management requires employee disclosure</li><li>Marketing and public communications must accurately represent AI involvement in products and services</li></ul></div>
+          <div class="tag-row"><span class="tag">Transparency</span><span class="tag">Disclosure</span><span class="tag">EU AI Act</span><span class="tag">Singapore 2026</span><span class="tag">GDPR</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-high" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-high">HIGH</span><span class="card-num">3</span><span class="card-title">Ethical use policy and employee conduct risk</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">Employees using AI agents may engage in behaviours that are individually expedient but ethically or legally problematic: fabricating rationale for AI-assisted decisions, using agents to circumvent approval processes, or deploying agents for purposes outside their sanctioned use. Research shows AI in the workplace creates unexpected ethical temptation pathways that compliance officers must address.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Code of conduct must explicitly address AI agent use and misuse</li><li>"AI washing" — attributing AI-generated outputs as human work — is an emerging integrity risk</li><li>Whistleblower channels must be adapted to receive AI misuse reports</li><li>Ethics training must cover AI-specific scenarios, not just traditional compliance topics</li></ul></div>
+          <div class="tag-row"><span class="tag">Ethics</span><span class="tag">Code of conduct</span><span class="tag">AI washing</span><span class="tag">Integrity</span></div>
+        </div>
+      </div>
+
+      <div class="challenge-card card-medium" onclick="toggle(this)">
+        <div class="card-header"><span class="sev-pill sev-medium">MEDIUM</span><span class="card-num">4</span><span class="card-title">Environmental and sustainability impact (ESG)</span><span class="card-chevron">▼</span></div>
+        <div class="card-body">
+          <p class="card-desc">Large-scale deployment of AI agents consumes significant compute resources. Training and inference for large language models carry a substantial carbon footprint. ESG reporting frameworks (GRI, TCFD, CSRD) are beginning to require disclosure of AI's environmental footprint. Corporations with sustainability commitments must account for the energy consumption of their agent infrastructure.</p>
+          <div class="implications-box"><div class="impl-label">Key implications for GRC and audit</div><ul class="impl-list"><li>Scope 2 and Scope 3 emissions reporting may need to include AI infrastructure energy use</li><li>Procurement decisions for AI infrastructure should include energy efficiency criteria</li><li>Sustainability teams are rarely included in AI deployment decisions — a governance gap</li><li>CSRD under the EU may require quantified disclosure of AI energy consumption from 2026 onward</li></ul></div>
+          <div class="tag-row"><span class="tag">ESG</span><span class="tag">Carbon footprint</span><span class="tag">CSRD</span><span class="tag">Sustainability</span><span class="tag">Energy consumption</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       SEVERITY SUMMARY
+  ══════════════════════════════════════════════════════════════════════ -->
+  <div class="sev-summary">
+    <div class="sev-item">
+      <div class="sev-circle c">18</div>
+      <div class="sev-detail"><strong>Critical severity</strong><span>Requires immediate governance attention and board-level awareness</span></div>
+    </div>
+    <div class="sev-item">
+      <div class="sev-circle h">16</div>
+      <div class="sev-detail"><strong>High severity</strong><span>Significant control or compliance exposure requiring programme-level response</span></div>
+    </div>
+    <div class="sev-item">
+      <div class="sev-circle m">8</div>
+      <div class="sev-detail"><strong>Medium severity</strong><span>Emerging risk requiring monitoring and policy development</span></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       FOUR UNANSWERED QUESTIONS
+  ══════════════════════════════════════════════════════════════════════ -->
+  <div class="questions-section">
+    <h2 class="q-head">The Questions That Do Not Yet Have Answers</h2>
+    <p class="q-sub">Four governance questions every GRC leader must engage with — now, without waiting for settled guidance</p>
+    <div class="q-list">
+      <div class="q-item"><span class="q-num">01</span><span class="q-text">Can an agent be a control owner?</span></div>
+      <div class="q-item"><span class="q-num">02</span><span class="q-text">What does human oversight mean at machine speed?</span></div>
+      <div class="q-item"><span class="q-num">03</span><span class="q-text">How is liability distributed across agent chains?</span></div>
+      <div class="q-item"><span class="q-num">04</span><span class="q-text">What is the audit standard for AI-assisted audit work?</span></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ── FOOTER ── -->
+<footer class="page-footer">
+  <span>AI Agents in the Enterprise — GRC Challenge Catalog &nbsp;·&nbsp; As at mid-2026</span>
+  <span>EU AI Act &nbsp;·&nbsp; NIST AI RMF &nbsp;·&nbsp; ISO/IEC 42001 &nbsp;·&nbsp; Singapore MAIMF 2026 &nbsp;·&nbsp; GDPR &nbsp;·&nbsp; FATF &nbsp;·&nbsp; SR 11-7</span>
+</footer>
+
+<script>
+  function toggle(card) {
+    card.classList.toggle('open');
+  }
+</script>
+</body>
+</html>
